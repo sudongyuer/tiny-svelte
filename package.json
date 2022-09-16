@@ -1,7 +1,7 @@
 {
   "name": "tiny-svelte",
   "version": "1.0.0",
-  "description": "",
+  "description": "tiny svelte",
   "main": "index.js",
   "type": "module",
   "scripts": {
