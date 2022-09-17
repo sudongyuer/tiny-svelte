@@ -1,4 +1,5 @@
 import * as fs from 'fs'
+import acorn from 'acorn'
 
 const content = fs.readFileSync('./app.svelte', 'utf-8')
 const ast = parse(content)
@@ -24,9 +25,12 @@ export function parse(content) {
   function parseScript() {
     if (match('<script>')) {
       eat('<script>')
-      const script = readWhileMatching(/[^<]/)
+      const startIndex = i
+      const endIndex = content.indexOf('</script>', startIndex)
+      const code = content.slice(startIndex, endIndex)
+      ast.script = acorn.parse(code, { sourceType: 'module', ecmaVersion: 2022 })
+      i = endIndex
       eat('</script>')
-      return script
     }
   }
 
