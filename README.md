@@ -25,7 +25,7 @@ stag-name>
     - [ ] parseExpression
     - [ ] parseText
     - [ ] parseJavaScript
-    - [ ] match
-    - [ ] eat
+    - [x] match
+    - [x] eat
 - [ ] analyse
 - [ ] generate
