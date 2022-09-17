@@ -45,8 +45,18 @@ describe("parse", () => {
     expect(()=>eat("<button>")).toThrowError()
   })
 
-  it('exported', () => {
-    expect(1).toEqual(1)
+  it("readWhileMatching",()=>{
+    let i = 5
+    const content = "<div>hello</div>"
+    function readWhileMatching(regex){
+      let startIndex = i
+      while(regex.test(content[i])){
+        i++
+      }
+      return content.slice(startIndex,i)
+    }
+    expect(readWhileMatching(/[^<]/)).toEqual("hello")
+    expect(i).toEqual(10)
   })
 
   it("parse fragment", () => {
