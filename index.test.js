@@ -1,65 +1,63 @@
-import {describe, expect, it} from 'vitest'
+import { describe, expect, it } from 'vitest'
 
-describe("parse", () => {
-
+describe('parse', () => {
   it('match', () => {
-    let i = 0;
-    const content = "<div>hello</div>"
+    const i = 0
+    const content = '<div>hello</div>'
     function match(str) {
       return content.slice(i, str.length) === str
     }
 
-    expect(match("<div>")).toBe(true)
+    expect(match('<div>')).toBe(true)
   })
 
   it('eat', () => {
-    let i = 0;
-    const content = "<div>hello</div>"
+    let i = 0
+    const content = '<div>hello</div>'
     function match(str) {
       return content.slice(i, str.length) === str
     }
+
     function eat(str) {
-      if (match(str)) {
+      if (match(str))
         i += str.length
-      } else {
+      else
         throw new Error(`Parse error: expecting "${str}"`)
-      }
     }
-    eat("<div>")
+    eat('<div>')
     expect(i).toEqual(5)
   })
 
   it('eat error', () => {
-    let i = 0;
-    const content = "<div>hello</div>"
+    let i = 0
+    const content = '<div>hello</div>'
     function match(str) {
       return content.slice(i, str.length) === str
     }
     function eat(str) {
-      if (match(str)) {
+      if (match(str))
         i += str.length
-      } else {
+      else
         throw new Error(`Parse error: expecting "${str}"`)
-      }
     }
-    expect(()=>eat("<button>")).toThrowError()
+    expect(() => eat('<button>')).toThrowError()
   })
 
-  it("readWhileMatching",()=>{
+  it('readWhileMatching', () => {
     let i = 5
-    const content = "<div>hello</div>"
-    function readWhileMatching(regex){
-      let startIndex = i
-      while(regex.test(content[i])){
+    const content = '<div>hello</div>'
+    function readWhileMatching(regex) {
+      const startIndex = i
+      while (regex.test(content[i])) {
         i++
       }
-      return content.slice(startIndex,i)
+      return content.slice(startIndex, i)
     }
-    expect(readWhileMatching(/[^<]/)).toEqual("hello")
+    expect(readWhileMatching(/[^<]/)).toEqual('hello')
     expect(i).toEqual(10)
   })
 
-  it("parse fragment", () => {
+  it('parse fragment', () => {
 
   })
 })
