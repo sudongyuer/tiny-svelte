@@ -7,14 +7,14 @@ const js = generate(ast,analysis)
 
 fs.writeFileSync('./app.js',js,'utf-8')
 
-function parse(content){
+export function parse(content){
 
 }
 
-function analyse(ast){
+export function analyse(ast){
 
 }
 
-function generate(ast,analysis){
+export function generate(ast,analysis){
 
 }
