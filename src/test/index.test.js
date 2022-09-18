@@ -1,5 +1,8 @@
+import * as fs from 'fs'
+import * as path from 'path'
 import { describe, expect, it } from 'vitest'
-
+import * as acorn from 'acorn'
+const cwd = () => process.cwd()
 describe('parse', () => {
   it('match', () => {
     const i = 0
@@ -59,5 +62,27 @@ describe('parse', () => {
 
   it('parse fragment', () => {
 
+  })
+
+  it('test acorn parse expression', () => {
+    const content = 'function printTips() {\n'
+      + '  console.log("hello")\n'
+      + '}'
+    const js = acorn.parseExpressionAt(content, 0, { ecmaVersion: 2022 })
+    console.warn(js)
+  })
+
+  it('parse expression', () => {
+    let i = 8
+    const content = fs.readFileSync(path.resolve(cwd(), './src/app.svelte'), 'utf-8')
+    console.warn(content)
+    function parseJavaScript() {
+      const startIndex = i
+      const js = acorn.parseExpressionAt(content, startIndex, { ecmaVersion: 2022 })
+      i = js.end
+      return js
+    }
+    const js = parseJavaScript()
+    console.warn(js)
   })
 })
