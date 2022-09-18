@@ -198,7 +198,7 @@ export function generate(ast, analysis) {
   function traverse(node, parent) {
     switch (node.type) {
       case 'Element' :
-        const variableName = `${node.name}_${counter++}`
+      { const variableName = `${node.name}_${counter++}`
         code.variables.push(variableName)
         code.create.push(
         `${variableName} = document.createElement('${node.name}')`,
@@ -212,6 +212,7 @@ export function generate(ast, analysis) {
         code.create.push(`${parent}.appendChild(${variableName})`)
         code.destroy.push(`${parent}.removeChild(${variableName})`)
         break
+      }
       case 'Text':{
         const variableName = `txt_${counter++}`
         code.variables.push(variableName)
@@ -235,10 +236,24 @@ export function generate(ast, analysis) {
         break
       }
       case 'Expression':{
-      //  TODO
+        const variableName = `txt_${counter++}`
+        const expression = node.expression.name
+        code.variables.push(variableName)
+        code.create.push(
+          `${variableName} = document.createTextNode(${expression})`,
+        )
+        code.create.push(`${parent}.appendChild(${variableName})`)
+        if (analysis.willChange.has(node.expression.name)) {
+          code.update.push(`if(changed.includes('${expression}')){
+          ${variableName}.data = ${expression}
+          }`)
+        }
+        break
       }
     }
   }
+
+  ast.html.forEach(fragment => traverse(fragment, 'target'))
 
   return `
   export default function(){
