@@ -8,9 +8,7 @@ const content = fs.readFileSync('./app.svelte', 'utf-8').trim()
 const ast = parse(content)
 // console.log(JSON.stringify(ast, null, 2))
 const analysis = analyse(ast)
-console.log(analysis)
 const js = generate(ast, analysis)
-
 fs.writeFileSync('./app.js', js, 'utf-8')
 
 export function parse(content) {
@@ -137,6 +135,7 @@ export function parse(content) {
       i++
     return content.slice(startIndex, i)
   }
+
   return ast
 }
 
@@ -153,10 +152,10 @@ export function analyse(ast) {
   let currentScope = rootScope
   estreewalker.walk(ast.script, {
     enter(node) {
-      if (map.has(node))currentScope = map.get(node)
+      if (map.has(node)) currentScope = map.get(node)
       if (
         node.type === 'UpdateExpression'
-      && currentScope.find_owner(node.argument.name) === rootScope
+        && currentScope.find_owner(node.argument.name) === rootScope
       )
         result.willChange.add(node.argument.name)
     },
@@ -197,11 +196,11 @@ export function generate(ast, analysis) {
 
   function traverse(node, parent) {
     switch (node.type) {
-      case 'Element' :
-      { const variableName = `${node.name}_${counter++}`
+      case 'Element' : {
+        const variableName = `${node.name}_${counter++}`
         code.variables.push(variableName)
         code.create.push(
-        `${variableName} = document.createElement('${node.name}')`,
+          `${variableName} = document.createElement('${node.name}')`,
         )
         node.attributes.forEach((attribute) => {
           traverse(attribute, variableName)
@@ -213,7 +212,7 @@ export function generate(ast, analysis) {
         code.destroy.push(`${parent}.removeChild(${variableName})`)
         break
       }
-      case 'Text':{
+      case 'Text': {
         const variableName = `txt_${counter++}`
         code.variables.push(variableName)
         code.create.push(
@@ -222,10 +221,10 @@ export function generate(ast, analysis) {
         code.create.push(`${parent}.appendChild(${variableName})`)
         break
       }
-      case 'Attribute':{
+      case 'Attribute': {
         if (node.name.startsWith('on:')) {
-          const eventHandler = node.value.name
           const eventName = node.name.slice(3)
+          const eventHandler = node.value.name
           code.create.push(
             `${parent}.addEventListener('${eventName}',${eventHandler})`,
           )
@@ -235,7 +234,7 @@ export function generate(ast, analysis) {
         }
         break
       }
-      case 'Expression':{
+      case 'Expression': {
         const variableName = `txt_${counter++}`
         const expression = node.expression.name
         code.variables.push(variableName)
@@ -255,20 +254,55 @@ export function generate(ast, analysis) {
 
   ast.html.forEach(fragment => traverse(fragment, 'target'))
 
+  const { rootScope, map } = analysis
+  let currentScope = rootScope
+  estreewalker.walk(ast.script, {
+    enter(node) {
+      if (map.has(node)) currentScope = map.get(node)
+      if (
+        node.type === 'UpdateExpression'
+        && currentScope.find_owner(node.argument.name) === rootScope
+        && analysis.willUseInTemplate.has(node.argument.name)
+      ) {
+        this.replace({
+          type: 'SequenceExpression',
+          expressions: [
+            node,
+            acorn.parseExpressionAt(
+              `lifeCycle.update(['${node.argument.name}'])`,
+              0,
+              {
+                ecmaVersion: 2022,
+              },
+            ),
+          ],
+        })
+        this.skip()
+      }
+    },
+    leave(node) {
+      if (map.has(node)) currentScope = currentScope.parent
+    },
+  })
+
   return `
   export default function(){
+  ${escodegen.generate(ast.script)}
   ${code.variables.map(v => `let ${v}`).join('\n')}
-    const lifesycle = {
-    create(target){
+  ${'let target'}
+    const lifeCycle = {
+    create(_target){
+    target = _target
     ${code.create.join('\n')}
     },
     update(changed){
     ${code.update.join('\n')}
     },
-    destroy{
+    destroy(){
     ${code.destroy.join('\n')}
     }
   }
-  return lifesycle
+  return lifeCycle
+  }
   `
 }
