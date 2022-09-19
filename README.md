@@ -1,10 +1,6 @@
 # tiny-svelte
 > mini svelte implement
 
-## WIP
-I am working on this~~~
-## Todo
-
 ## Svelte Syntax
 ```js
 <fragments> <fragment>| <fragments> <fragment>
@@ -16,16 +12,16 @@ I am working on this~~~
 stag-name>
 ```
 
-- [ ] parse
-    - [ ] parseFragments
-    - [ ] parseScript
-    - [ ] parseElement
-    - [ ] parseAttributeList
-    - [ ] parseAttribute
-    - [ ] parseExpression
-    - [ ] parseText
+- [x] parse
+    - [x] parseFragments
+    - [x] parseScript
+    - [x] parseElement
+    - [x] parseAttributeList
+    - [x] parseAttribute
+    - [x] parseExpression
+    - [x] parseText
     - [x] parseJavaScript
     - [x] match
     - [x] eat
-- [ ] analyse
-- [ ] generate
+- [x] analyse
+- [x] generate
