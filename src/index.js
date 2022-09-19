@@ -9,9 +9,9 @@ const ast = parse(content)
 // console.log(JSON.stringify(ast, null, 2))
 const analysis = analyse(ast)
 console.log(analysis)
-// const js = generate(ast, analysis)
+const js = generate(ast, analysis)
 
-// fs.writeFileSync('./app.js', js, 'utf-8')
+fs.writeFileSync('./app.js', js, 'utf-8')
 
 export function parse(content) {
   let i = 0
@@ -229,7 +229,7 @@ export function generate(ast, analysis) {
           code.create.push(
             `${parent}.addEventListener('${eventName}',${eventHandler})`,
           )
-          code.destroy.pus(
+          code.destroy.push(
             `${parent}.removeEventListener('${eventName}',${eventHandler})`,
           )
         }
