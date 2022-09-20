@@ -1,6 +1,6 @@
 
 <p align="center">
-<a href="https://github.com/sudongyuer/vite-plugin-vue-inspector"><img src="https://cdn.staticaly.com/gh/sudongyuer/image-bed@master/20220920/Group-1.7inpvmf9y240.png" width='200'/></a>
+<a href="https://github.com/sudongyuer/tiny-svelte"><img src="https://cdn.staticaly.com/gh/sudongyuer/image-bed@master/20220920/TinySvelte.2dh0leenevy8.png" width='200'/></a>
 </p>
 
 ## 👀 Why
